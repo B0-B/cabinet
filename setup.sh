@@ -14,16 +14,16 @@ function log () {
             then col="\033[1;33m"
         fi
     fi
-    printf "[\033[1;33mCADDY\033[0m]: $col$1\033[0m\n"
+    printf "[\033[1;35mCADDY\033[0m]: $col$1\033[0m\n"
 }
 
-function groove () {
+function caddy () {
     local pid=$!
-    declare -a ani=("    🛒" "   🛒 " "  🛒  " " 🛒   " "🛒    " "      ")
+    declare -a ani=("   🛒" "  🛒 " " 🛒  " "🛒   " "     ")
     declare -i id
     id=0
     while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
-        id=$id%6
+        id=$id%5
         #echo "$id ${ani[$id]}"
         printf "[\033[1;35m${ani[$id]}\033[0m]: $1\r"
         id=$((id+1))
@@ -32,30 +32,39 @@ function groove () {
 }
 
 function aptInstaller () {
-    # 1: name 2: install command
-    sudo apt -y install $1 &> /dev/null &
-    groove "installing $1"
-    wait
+    # 1: pkg name
+    cmd="sudo apt install $1 -y"
+    eval $cmd &> /dev/null & caddy "installing $1"
+    sleep .1
     log "installed $1"
 }
 
-aptInstaller "telegram-desktop"
-aptInstaller "p7zip-full p7zip-rar"
+function snapInstaller () {
+    # 1: pkg name
+    cmd="snap install $1 --classic"
+    eval $cmd &> /dev/null & caddy "installing $1"
+    log "installed $1"
+}
 
-# sleep 10 &
-# groove "wait"
+# -- apt package install --
+log "installing apt packages" "y"
+aptInstaller p7zip-full 
+aptInstaller p7zip-rar
+aptInstaller telegram-desktop
+aptInstaller snap
+aptInstaller curl 
 
-# # apt installations
-# apts=(
-#     "telegram-desktop"
-#     "p7zip-full p7zip-rar"
-# )
-# log "starting apt installs" "y"
-# for i in "${apts[@]}"
-# do
-#     echo test $i
-#     installer "$i"
-# done
+# -- snap package install --
+log "installing snap packages" "y"
+snapInstaller code 
 
+# install distro
+log "setup distro" "y"
 
-# log "Hello World!" "c"
+# change background
+wallpaperDir=$HOME/wallpaper/
+[ -d $wallpaperDir ] && log "Directory $wallpaperDir exists already." || mkdir $wallpaperDir && 
+curl https://cdn.pling.com/img/5/6/4/6/61892171f7d21851565aca04d73234557d24.png --output ubuntu.png &> /dev/null &&
+mv ubuntu.png $wallpaperDir/ubuntu.png &&
+gsettings set org.gnome.desktop.background picture-uri $wallpaperDir/ubuntu.png && log "wallpaper was set."
+
