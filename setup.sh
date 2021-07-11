@@ -1,5 +1,19 @@
+#!/bin/bash
+
+# ============== parameters ===============
+declare wallpaperUrl="https://cdn.pling.com/img/5/6/4/6/61892171f7d21851565aca04d73234557d24.png"
+# =========================================
+
+
+
+
+
+
+
 # logo
 sleep .5;printf "\n\t\033[1;33mC O D E  \033[1;35mC A D D Y\033[0m\n\n";sleep .5
+
+
 
 function log () {
     col=""
@@ -32,18 +46,30 @@ function caddy () {
 }
 
 function aptInstaller () {
-    # 1: pkg name
-    cmd="sudo apt install $1 -y"
-    eval $cmd &> /dev/null & caddy "installing $1"
-    sleep .1
-    log "installed $1"
+    if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ];
+    then
+        # 1: pkg name
+        cmd="sudo apt install $1 -y"
+        eval $cmd &> /dev/null & caddy "installing $1"
+        sleep .1
+        log "installed $1"
+    else
+        log "$1 installed already."
+    fi
 }
 
 function snapInstaller () {
     # 1: pkg name
-    cmd="snap install $1 --classic"
-    eval $cmd &> /dev/null & caddy "installing $1"
-    log "installed $1"
+    if [ $(dpkg-query -W -f='${Status}' $1 2>/dev/null | grep -c "ok installed") -eq 0 ];
+    then
+        # 1: pkg name
+        cmd="snap install $1 --classic"
+        eval $cmd &> /dev/null & caddy "installing $1"
+        sleep .1
+        log "installed $1"
+    else
+        log "$1 installed already."
+    fi
 }
 
 # -- apt package install --
@@ -52,7 +78,12 @@ aptInstaller p7zip-full
 aptInstaller p7zip-rar
 aptInstaller telegram-desktop
 aptInstaller snap
-aptInstaller curl 
+aptInstaller curl
+
+# -- install technologies --
+aptInstaller git
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - &> /dev/null & caddy "curl nodejs and npm"
+aptInstaller nodejs
 
 # -- snap package install --
 log "installing snap packages" "y"
@@ -64,7 +95,7 @@ log "setup distro" "y"
 # change background
 wallpaperDir=$HOME/wallpaper/
 [ -d $wallpaperDir ] && log "Directory $wallpaperDir exists already." || mkdir $wallpaperDir && 
-curl https://cdn.pling.com/img/5/6/4/6/61892171f7d21851565aca04d73234557d24.png --output ubuntu.png &> /dev/null &&
+curl $wallpaperUrl --output ubuntu.png &> /dev/null &&
 mv ubuntu.png $wallpaperDir/ubuntu.png &&
 gsettings set org.gnome.desktop.background picture-uri $wallpaperDir/ubuntu.png && log "wallpaper was set."
 
