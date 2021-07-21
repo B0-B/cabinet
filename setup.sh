@@ -74,8 +74,6 @@ function snapInstaller () {
 
 # -- apt package install --
 log "installing apt packages" "y"
-aptInstaller p7zip-full 
-aptInstaller p7zip-rar
 aptInstaller telegram-desktop
 aptInstaller snap
 aptInstaller curl
