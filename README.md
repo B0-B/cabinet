@@ -1,3 +1,3 @@
-# CodeCaddy
+# cabinet
 
-### wget -O - https://b0-b.github.io/CodeCaddy/setup.sh | bash
+A safespace and repository for short applets, terminal games and random alogrithms in different languages.
