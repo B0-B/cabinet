@@ -1,3 +1,3 @@
 # cabinet
 
-A safe space and repository for short applets, terminal games and random alogrithms in different languages.
+A safe space repository for short legacy applets, terminal games, random alogrithms and toolkits in different languages.
